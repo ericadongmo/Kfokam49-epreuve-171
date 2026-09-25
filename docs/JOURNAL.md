@@ -24,11 +24,11 @@ Chaque entrée répond aux trois mêmes questions :
 
 ## Étape 2 — Première version
 
-**Fait :**
+**Fait :** backend Spring Boot complet (13 issues, Must à Could) conforme à `api/contrat.yaml`, frontend Next.js avec les trois écrans, tests unitaires + intégration verts, `npm run build` et `./mvnw test` passent.
 
-**Bloqué :**
+**Bloqué :** ~20 min sur deux bugs trouvés en testant l'API réelle après le build (pas visibles en tests unitaires mockés) : (1) les id explicites de `V2__donnees_demo.sql` ne faisaient pas avancer les séquences IDENTITY de H2, la première session créée entrait en collision avec l'id 1 de démo ; (2) le blocage RG15 après 5 codes invalides ne se déclenchait jamais car le rollback transactionnel de l'`ApiException` annulait l'enregistrement de l'échec lui-même. Corrigés, tests de non-régression ajoutés (voir `CHANGELOG.md`).
 
-**IA :**
+**IA :** a généré l'implémentation initiale des 13 issues (backend + frontend) à partir du cahier des charges et du contrat déjà écrits à l'étape 1. Vérifié par : relecture du contrat un endpoint à la fois, exécution de la suite de tests, puis un parcours API complet à la main (`curl`) rejouant chaque critère d'acceptation des 13 issues sur le backend réellement démarré — c'est ce parcours, pas les tests unitaires, qui a révélé les deux bugs ci-dessus. Écran par écran vérifié par rendu serveur (`curl` sur chaque route) et `npm run build`/`lint` ; pas de clic-à-clic dans un vrai navigateur, aucun outil de navigateur n'étant disponible dans cet environnement — à refaire manuellement avant la démo.
 
 ---
 
