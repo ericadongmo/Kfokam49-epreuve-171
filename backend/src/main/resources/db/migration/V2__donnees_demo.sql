@@ -47,3 +47,15 @@ INSERT INTO relecture (id, exercice_id, relecteur_id, note, commentaire, statut,
 VALUES (2, 2, 4, 16, 'Bon travail, quelques tests manquants.', 'RENDUE', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- Les étudiants 5 à 12 n'ont ni exercice ni note : ENF6 (« au moins un étudiant sans note »).
+
+-- Les INSERT ci-dessus fixent des id explicites ; H2 n'avance pas seul la
+-- séquence IDENTITY dans ce cas (elle resterait à 1). Sans ce redémarrage,
+-- la première ligne créée par l'application (ex. POST /api/sessions)
+-- entrerait en collision avec l'id 1 déjà utilisé par les données de démo.
+ALTER TABLE promotion ALTER COLUMN id RESTART WITH 2;
+ALTER TABLE formateur ALTER COLUMN id RESTART WITH 2;
+ALTER TABLE etudiant ALTER COLUMN id RESTART WITH 13;
+ALTER TABLE session_cours ALTER COLUMN id RESTART WITH 2;
+ALTER TABLE exercice ALTER COLUMN id RESTART WITH 3;
+ALTER TABLE relecture ALTER COLUMN id RESTART WITH 3;
+

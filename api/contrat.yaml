@@ -269,6 +269,151 @@ paths:
         "404": { $ref: "#/components/responses/Erreur" }   # RELECTURE_INCONNUE
         "409": { $ref: "#/components/responses/Erreur" }   # RELECTURE_DEJA_RENDUE
 
+  # ------------------------------------------------------------
+  # Opérations libres complémentaires — nécessaires aux trois écrans
+  # (F2) puisque l'application n'a pas d'authentification : l'étudiant
+  # choisit son nom dans une liste (Q1), le frontend a donc besoin de
+  # lister promotions/étudiants, de résoudre une session par son code,
+  # et de savoir ce qui est déjà déposé/assigné avant d'agir.
+  # ------------------------------------------------------------
+
+  /api/promotions:
+    get:
+      summary: Lister les promotions (pour le sélecteur de promotion)
+      responses:
+        "200":
+          description: Promotions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  required: [id, nom]
+                  properties:
+                    id: { type: integer, format: int64 }
+                    nom: { type: string }
+
+  /api/etudiants:
+    get:
+      summary: Lister les étudiants d'une promotion (Q1 - choix dans une liste)
+      parameters:
+        - name: promotionId
+          in: query
+          required: false
+          schema: { type: integer, format: int64 }
+      responses:
+        "200":
+          description: Étudiants
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  required: [id, nom, promotionId]
+                  properties:
+                    id: { type: integer, format: int64 }
+                    nom: { type: string }
+                    promotionId: { type: integer, format: int64 }
+
+  /api/sessions/{id}:
+    get:
+      summary: Détail d'une session
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer, format: int64 }
+      responses:
+        "200": { description: Session }
+        "404": { $ref: "#/components/responses/Erreur" }   # SESSION_INCONNUE
+
+  /api/sessions/code/{code}:
+    get:
+      summary: Résoudre une session à partir du code donné par le formateur
+      description: |
+        Utilisé par les écrans étudiant/relecteur : l'étudiant a le code de
+        classe, pas l'id technique de la session.
+      parameters:
+        - name: code
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200": { description: Session }
+        "400": { $ref: "#/components/responses/Erreur" }   # CODE_INCONNU
+
+  /api/sessions/{id}/presences:
+    get:
+      summary: Lister les présences d'une session, avec le nom de l'étudiant
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer, format: int64 }
+      responses:
+        "200": { description: Présences }
+
+  /api/sessions/{sessionId}/exercices/{etudiantId}:
+    get:
+      summary: Retrouver l'exercice d'un étudiant pour une session donnée
+      description: |
+        Utilisé par l'écran étudiant pour savoir s'il doit proposer un dépôt
+        ou un remplacement de lien.
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          schema: { type: integer, format: int64 }
+        - name: etudiantId
+          in: path
+          required: true
+          schema: { type: integer, format: int64 }
+      responses:
+        "200": { description: Exercice }
+        "404": { $ref: "#/components/responses/Erreur" }   # EXERCICE_INCONNU
+
+  /api/exercices/{id}:
+    put:
+      summary: L'étudiant remplace le lien de son exercice
+      description: |
+        Réf. EF15 · RG10 : refusé dès que la relecture n'est plus EN_ATTENTE.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer, format: int64 }
+        - name: etudiantId
+          in: query
+          required: true
+          schema: { type: integer, format: int64 }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [lien]
+              properties:
+                lien: { type: string, format: uri }
+      responses:
+        "200": { description: Lien remplacé }
+        "400": { $ref: "#/components/responses/Erreur" }   # LIEN_INVALIDE
+        "403": { $ref: "#/components/responses/Erreur" }   # ACCES_REFUSE
+        "409": { $ref: "#/components/responses/Erreur" }   # REMPLACEMENT_IMPOSSIBLE
+
+  /api/etudiants/{id}/relectures:
+    get:
+      summary: Lister les relectures assignées à un étudiant (écran relecteur)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer, format: int64 }
+      responses:
+        "200": { description: Relectures assignées }
+
 components:
   schemas:
     Erreur:

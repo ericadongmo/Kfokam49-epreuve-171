@@ -4,6 +4,8 @@ import com.kfokam.presencekf.domain.TentativeCode;
 import com.kfokam.presencekf.error.ApiException;
 import com.kfokam.presencekf.repository.TentativeCodeRepository;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -53,10 +55,18 @@ public class RateLimitService {
         }
     }
 
+    /**
+     * REQUIRES_NEW : l'appelant (PresenceService.marquerParCode) est @Transactional
+     * et va lever une ApiException juste après avoir appelé cette méthode ; sans sa
+     * propre transaction, l'enregistrement de l'échec serait annulé par le rollback
+     * déclenché par cette même exception, et le compteur RG15 ne verrait jamais rien.
+     */
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void enregistrerEchec(Long etudiantId) {
         enregistrer(etudiantId, false);
     }
 
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void enregistrerSucces(Long etudiantId) {
         enregistrer(etudiantId, true);
     }

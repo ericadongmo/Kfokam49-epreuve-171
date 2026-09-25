@@ -1,0 +1,238 @@
+:root {
+  --couleur-texte: #1a1a2e;
+  --couleur-fond: #f7f7fb;
+  --couleur-carte: #ffffff;
+  --couleur-bordure: #d8d8e6;
+  --couleur-primaire: #3450a3;
+  --couleur-primaire-fonce: #26397b;
+  --couleur-succes: #1f7a4d;
+  --couleur-succes-fond: #e6f6ee;
+  --couleur-erreur: #b3261e;
+  --couleur-erreur-fond: #fbeae9;
+  --couleur-info: #3450a3;
+  --couleur-info-fond: #eaeefb;
+  --rayon: 10px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--couleur-fond);
+  color: var(--couleur-texte);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  line-height: 1.5;
+}
+
+main {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+header.entete {
+  background: var(--couleur-primaire);
+  color: white;
+  padding: 16px;
+}
+
+header.entete h1 {
+  margin: 0 0 8px;
+  font-size: 1.25rem;
+}
+
+nav.entete-nav {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+nav.entete-nav a {
+  color: white;
+  text-decoration: none;
+  padding: 6px 10px;
+  border-radius: var(--rayon);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  font-size: 0.9rem;
+}
+
+nav.entete-nav a[aria-current="page"] {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+h2 {
+  font-size: 1.1rem;
+  margin-top: 0;
+}
+
+.carte {
+  background: var(--couleur-carte);
+  border: 1px solid var(--couleur-bordure);
+  border-radius: var(--rayon);
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.champ-groupe {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 12px;
+}
+
+label {
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+/* font-size >= 16px : évite le zoom automatique iOS (ENF1) */
+input,
+select,
+textarea,
+button {
+  font-size: 16px;
+  padding: 10px 12px;
+  border-radius: var(--rayon);
+  border: 1px solid var(--couleur-bordure);
+  font-family: inherit;
+  width: 100%;
+}
+
+input[type="text"],
+input[type="url"] {
+  text-transform: none;
+}
+
+button {
+  background: var(--couleur-primaire);
+  color: white;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  width: auto;
+  min-height: 44px;
+  min-width: 44px;
+}
+
+button:hover:not(:disabled) {
+  background: var(--couleur-primaire-fonce);
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+button.secondaire {
+  background: white;
+  color: var(--couleur-primaire);
+  border: 1px solid var(--couleur-primaire);
+}
+
+.banniere {
+  padding: 10px 12px;
+  border-radius: var(--rayon);
+  margin: 8px 0;
+  font-size: 0.95rem;
+}
+
+.banniere--erreur {
+  background: var(--couleur-erreur-fond);
+  color: var(--couleur-erreur);
+}
+
+.banniere--succes {
+  background: var(--couleur-succes-fond);
+  color: var(--couleur-succes);
+}
+
+.banniere--info {
+  background: var(--couleur-info-fond);
+  color: var(--couleur-info);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+th,
+td {
+  text-align: left;
+  padding: 8px 6px;
+  border-bottom: 1px solid var(--couleur-bordure);
+}
+
+.code-affiche {
+  font-size: 1.8rem;
+  letter-spacing: 0.2em;
+  font-weight: 700;
+  text-align: center;
+  padding: 12px;
+  background: var(--couleur-info-fond);
+  border-radius: var(--rayon);
+  color: var(--couleur-primaire-fonce);
+}
+
+.liste-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.liste-actions button {
+  flex: 1 1 auto;
+}
+
+.etiquette {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.etiquette--attente {
+  background: #fff3cd;
+  color: #7a5b00;
+}
+
+.etiquette--cours {
+  background: var(--couleur-info-fond);
+  color: var(--couleur-primaire);
+}
+
+.etiquette--rendue {
+  background: var(--couleur-succes-fond);
+  color: var(--couleur-succes);
+}
+
+.accueil-liens {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.accueil-liens a {
+  display: block;
+  padding: 16px;
+  background: var(--couleur-carte);
+  border: 1px solid var(--couleur-bordure);
+  border-radius: var(--rayon);
+  text-decoration: none;
+  color: var(--couleur-texte);
+}
+
+.accueil-liens a strong {
+  display: block;
+  color: var(--couleur-primaire);
+  margin-bottom: 4px;
+}

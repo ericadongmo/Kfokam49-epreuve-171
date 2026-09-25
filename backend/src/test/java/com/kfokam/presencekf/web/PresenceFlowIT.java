@@ -76,4 +76,26 @@ class PresenceFlowIT {
                 .andExpect(jsonPath("$.code").value("PROMOTION_INCONNUE"))
                 .andExpect(jsonPath("$.message").isNotEmpty());
     }
+
+    /**
+     * EF17 · RG15, à travers la vraie base (pas de mock) : c'est ici, et pas
+     * dans un test unitaire, qu'a été détecté un bug réel où le rollback
+     * transactionnel déclenché par l'ApiException CODE_INCONNU annulait aussi
+     * l'enregistrement de l'échec, empêchant tout blocage (corrigé par
+     * @Transactional(REQUIRES_NEW) sur RateLimitService).
+     */
+    @Test
+    void bloque_apres_cinq_codes_invalides_consecutifs() throws Exception {
+        String corpsCodeInvalide = "{ \"code\": \"ZZZZZZ\", \"etudiantId\": 6 }";
+
+        for (int i = 0; i < 5; i++) {
+            mockMvc.perform(post("/api/presences").contentType("application/json").content(corpsCodeInvalide))
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.code").value("CODE_INCONNU"));
+        }
+
+        mockMvc.perform(post("/api/presences").contentType("application/json").content(corpsCodeInvalide))
+                .andExpect(status().isTooManyRequests())
+                .andExpect(jsonPath("$.code").value("TROP_DE_TENTATIVES"));
+    }
 }
